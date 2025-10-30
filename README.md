@@ -106,5 +106,3 @@ venv/
 
 ### 🧠 Credits
 - OU SoonerAI platform  
-- Assignment by **Perspectives on Computing**
-- Readme built using OpenAI ChatGPT
