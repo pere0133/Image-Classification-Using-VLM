@@ -1,108 +1,74 @@
-## 🧽 SpongeBob CLI Chatbot  
-**Perspectives on Computing — GenAI Tools Assignment**  
-This project implements a **SpongeBob-style command-line chatbot** using the **OU SoonerAI API** (`https://ai.sooners.us`) and the `gemma3:4b` model.  
-It maintains **multi-turn chat history**, loads API keys from a secure `.env` file, and runs locally in a Python terminal environment.
+# CIFAR-10 Classification using `gemma3:4b` (ai.sooners.us)
+
+This project uses an OpenAI-compatible Vision-Language Model (VLM) endpoint at [https://ai.sooners.us](https://ai.sooners.us) to classify 100 sampled images from the CIFAR-10 dataset.  
+Each image (32×32 RGB) was sent as base64 to `/api/chat/completions` with different **system prompts** to measure the effect of prompt engineering on accuracy.
 
 ---
 
-### 🚀 Features
-- 🌊 Talks like SpongeBob SquarePants  
-- 💬 Multi-turn chat history (system + previous messages)  
-- 🔐 Secure API key handling via `~/.soonerai.env`  
-- 🤖 Uses OpenAI-compatible `/api/chat/completions` endpoint  
-- 🎯 Powered by **gemma3:4b** on **ai.sooners.us**
+## Setup
+
+1. **Environment file**
+
+   Create `~/.soonerai.env`:
+   ```bash
+   SOONERAI_API_KEY=your_key_here
+   SOONERAI_BASE_URL=https://ai.sooners.us
+   SOONERAI_MODEL=gemma3:4b
+   ```
+
+2. **Install dependencies**
+   ```bash
+   python -m venv cifar-env
+   source cifar-env/bin/activate     # (or Scripts\activate on Windows)
+   pip install requests python-dotenv torch torchvision pillow scikit-learn matplotlib
+   ```
+
+3. **Run classification**
+   ```bash
+   python cifar10_classify.py
+   ```
 
 ---
 
-### 🛠️ Requirements
-- Python 3.8+
-- `requests`, `python-dotenv`
+## Sampling
 
-Install dependencies:
-
-```bash
-pip install requests python-dotenv
-```
-
-Or using your virtual environment:
-
-```bash
-pip freeze > requirements.txt
-```
+A stratified sample of 100 training images (10 per class) was drawn using a fixed random seed (1337) for reproducibility.  
+Each image was resized to 224×224 before encoding to base64 to better match the VLM’s expected input size.
 
 ---
 
-### 🔐 Environment Setup
+## Experiments and Results
 
-Create a file **in your home directory** (not the project folder):
-
-**Windows PowerShell:**
-
-```bash
-notepad $env:USERPROFILE\.soonerai.env
-```
-
-Paste and save:
-
-```
-SOONERAI_API_KEY=your_api_key_here
-SOONERAI_BASE_URL=https://ai.sooners.us
-SOONERAI_MODEL=gemma3:4b
-```
-
-> ✅ This file must **not** be pushed to GitHub.
+| **Prompt ID** | **System Prompt Summary** | **Accuracy** | **Confusion Matrix** |
+|----------------|----------------------------|--------------|----------------------|
+| **Prompt A** (Baseline – *empty system prompt*) | No system message; relied only on user instruction “Respond with exactly one label…” | **64 %** | ![Prompt A](fbec2c3e-e3d8-45ff-977f-5f9c68b2152e.png) |
+| **Prompt B** (Descriptive context) | “You are an image classification assistant… focus on shape, texture, color…” | **60 %** | ![Prompt B](5d4a5ebe-d3bb-4f8c-946a-895568f2899c.png) |
+| **Prompt C** (Strict classification rules + disambiguation hints) | “STRICT MODE: classify one CIFAR-10 image; allowed labels… wings→airplane; floppy ears→dog; output one lowercase label only.” | **62 %** | ![Prompt C](01acd4eb-0361-4781-aa26-4c8345580797.png) |
 
 ---
 
-### ▶️ Running the Chatbot
+## Analysis
 
-Inside your repo folder / venv:
+- The **baseline (Prompt A)** achieved the highest accuracy (64 %) despite having no system prompt.  
+  It benefited from a very restrictive user instruction that forced one-word answers.  
+- Adding **general context (Prompt B)** reduced accuracy (60 %)—the model likely interpreted the task more loosely as a conversational assistant rather than a classifier.  
+- The **strict and hint-based prompt (Prompt C)** recovered some performance (62 %), showing that clear constraints and short outputs help VLMs maintain focus.  
+- Frequent confusions included **bird ↔ airplane**, **cat ↔ dog**, and **ship ↔ truck**, typical for low-resolution CIFAR-10 images.
 
-```bash
-python spongebob_cli.py
-```
-
-Type messages and chat!  
-Type `exit` to quit.
-
----
-
-### 💬 Example Conversation
-
-```
-SpongeBob is ready to talk to you! Type 'exit' to end this program.
-
-You: hi there
-SpongeBob: Hiiiiii there, buddy! It's me, SpongeBob SquarePants! Isn’t it just a *splashtastic* day?! The water's so bubbly and the sunshine's tickling my porous side! Do you like jellyfishing? It’s my absolute FAVORITE! ...
-
-You: do you speak spanish?
-SpongeBob: ¡Hola, amigo! ... ¡Vamos! (Let’s go!)
-
-You: exit
-Adiós amigo, goodbye!
-```
+Overall, **concise, rule-driven prompts** worked best for this model, while verbose or descriptive ones hurt accuracy.
 
 ---
 
-### 📁 Repo File Structure
+## Security and Reproducibility
 
-```
-spongebob_cli.py
-README.md
-requirements.txt
-.gitignore
-```
-
-`.gitignore` should include:
-
-```
-__pycache__/
-venv/
-*.env
-*.soonerai.env
-```
+- The API key is loaded from `~/.soonerai.env` (not committed).  
+- All random sampling uses a fixed seed (`SEED = 1337`).  
+- Misclassification details are logged in `misclassifications-prompt-X.jsonl` for audit and reproducibility.
 
 ---
 
-### 🧠 Credits
-- OU SoonerAI platform  
+**Deliverables**
+- `cifar10_classify.py`
+- `confusion_matrix-prompt-A.png`, `confusion_matrix-prompt-B.png`, `confusion_matrix-prompt-C.png`
+- `misclassifications-prompt-A.jsonl`, etc.
+- `README.md` (this file)
