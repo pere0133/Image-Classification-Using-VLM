@@ -1,4 +1,21 @@
-__pycache__/
+# virtual envs
 venv/
+cifar-env/
+
+# secrets
 *.env
-*.soonerai.env
+.soonerai.env
+
+# python cache
+__pycache__/
+*.pyc
+
+# data + large artifacts
+data/
+*.tar.gz
+*.dll
+*.whl
+.ipynb_checkpoints/
+
+# OS/editor
+.DS_Store
