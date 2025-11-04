@@ -41,9 +41,9 @@ Each image was resized to 224×224 before encoding to base64 to better match the
 
 | **Prompt ID** | **System Prompt Summary** | **Accuracy** | **Confusion Matrix** |
 |----------------|----------------------------|--------------|----------------------|
-| **Prompt A** (Baseline – *empty system prompt*) | No system message; relied only on user instruction “Respond with exactly one label…” | **64 %** | ![Prompt A](fbec2c3e-e3d8-45ff-977f-5f9c68b2152e.png) |
-| **Prompt B** (Descriptive context) | “You are an image classification assistant… focus on shape, texture, color…” | **60 %** | ![Prompt B](5d4a5ebe-d3bb-4f8c-946a-895568f2899c.png) |
-| **Prompt C** (Strict classification rules + disambiguation hints) | “STRICT MODE: classify one CIFAR-10 image; allowed labels… wings→airplane; floppy ears→dog; output one lowercase label only.” | **62 %** | ![Prompt C](01acd4eb-0361-4781-aa26-4c8345580797.png) |
+| **Prompt A** (Baseline – *empty system prompt*) | No system message; relied only on user instruction “Respond with exactly one label…” | **64 %** | ![Prompt A](confusion_matrix-prompt-A.png) |
+| **Prompt B** (Descriptive context) | “You are an image classification assistant… focus on shape, texture, color…” | **60 %** | ![Prompt B](confusion_matrix-prompt-B.png) |
+| **Prompt C** (Strict classification rules + disambiguation hints) | “STRICT MODE: classify one CIFAR-10 image; allowed labels… wings→airplane; floppy ears→dog; output one lowercase label only.” | **62 %** | ![Prompt C](confusion_matrix.png) |
 
 ---
 
