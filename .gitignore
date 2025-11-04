@@ -1,4 +1,4 @@
-# virtual envs
+# venvs
 venv/
 cifar-env/
 
@@ -10,12 +10,9 @@ cifar-env/
 __pycache__/
 *.pyc
 
-# data + large artifacts
+# datasets / big artifacts
 data/
 *.tar.gz
 *.dll
 *.whl
 .ipynb_checkpoints/
-
-# OS/editor
-.DS_Store
